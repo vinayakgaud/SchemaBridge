@@ -8,44 +8,52 @@ import (
 
 func TestObservationModel(t *testing.T) {
 	observationModel := observationmodel.ObservationModel{
-		RootType: observationmodel.FieldTypeObject,
-		Fields: []observationmodel.FieldObservation{
-			{
-				Name:     "id",
-				Type:     observationmodel.FieldTypeInteger,
-				Nullable: false,
-			},
-			{
-				Name:     "name",
-				Type:     observationmodel.FieldTypeString,
-				Nullable: false,
-			},
-			{
-				Name:     "age",
-				Type:     observationmodel.FieldTypeInteger,
-				Nullable: true,
-			},
-			{
-				Name:     "active",
-				Type:     observationmodel.FieldTypeBoolean,
-				Nullable: false,
+		Root: observationmodel.ObservationNode{
+			Type: observationmodel.FieldTypeObject,
+			Fields: []observationmodel.FieldObservation{
+				{
+					Name: "id",
+					Node: observationmodel.ObservationNode{
+						Type: observationmodel.FieldTypeNumber,
+					},
+				},
+				{
+					Name: "name",
+					Node: observationmodel.ObservationNode{
+						Type: observationmodel.FieldTypeString,
+					},
+				},
+				{
+					Name: "active",
+					Node: observationmodel.ObservationNode{
+						Type: observationmodel.FieldTypeBoolean,
+					},
+				},
+				{
+					Name: "age",
+					Node: observationmodel.ObservationNode{
+						Type:     observationmodel.FieldTypeNull,
+						Nullable: true,
+					},
+				},
 			},
 		},
 	}
 
-	if observationModel.RootType != observationmodel.FieldTypeObject {
+	if observationModel.Root.Type != observationmodel.FieldTypeObject {
 		t.Fatalf("RootType = %q, want %q",
-			observationModel.RootType,
+			observationModel.Root.Type,
 			observationmodel.FieldTypeObject,
 		)
 	}
 
-	lengthOfFields := len(observationModel.Fields)
+	lengthOfFields := len(observationModel.Root.Fields)
+
 	if lengthOfFields != 4 {
 		t.Fatalf("Fields = %d, want 4", lengthOfFields)
 	}
 
-	if !observationModel.Fields[2].Nullable {
+	if !observationModel.Root.Fields[3].Node.Nullable {
 		t.Fatalf("age should be nullable")
 	}
 }

@@ -1,12 +1,17 @@
 package observationmodel
 
 type ObservationModel struct {
-	RootType FieldType
-	Fields   []FieldObservation
+	Root ObservationNode
+}
+
+type ObservationNode struct {
+	Type         FieldType
+	Nullable     bool
+	Fields       []FieldObservation
+	ArrayElement []ObservationNode
 }
 
 type FieldObservation struct {
-	Name     string
-	Type     FieldType
-	Nullable bool
+	Name string
+	Node ObservationNode
 }

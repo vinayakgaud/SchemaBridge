@@ -7,34 +7,40 @@ import (
 	"github.com/vinayakgaud/schemabridge/contractanalysis/observationmodel"
 )
 
-func AnalyzeJson(data []byte) (observationmodel.ObservationModel, error) {
-	var fieldValue any
+func AnalyzeJSON(data []byte) (observationmodel.ObservationModel, error) {
+	var root any
 
-	if err := json.Unmarshal(data, &fieldValue); err != nil {
+	if err := json.Unmarshal(data, &root); err != nil {
 		return observationmodel.ObservationModel{}, fmt.Errorf("invalid JSON: %w", err)
 	}
 
-	observation := observationmodel.ObservationModel{
-		RootType: determineFieldType(fieldValue),
+	return observationmodel.ObservationModel{
+		Root: analyzeNode(root),
+	}, nil
+}
+
+func analyzeNode(value any) observationmodel.ObservationNode {
+	node := observationmodel.ObservationNode{
+		Type:     determineFieldType(value),
+		Nullable: value == nil,
 	}
 
-	object, ok := fieldValue.(map[string]any)
-
-	if !ok {
-		return observation, nil
-	}
-
-	for fieldName, value := range object {
-		field := observationmodel.FieldObservation{
-			Name:     fieldName,
-			Type:     determineFieldType(value),
-			Nullable: value == nil,
+	switch value := value.(type) {
+	case map[string]any:
+		for fieldName, fieldValue := range value {
+			node.Fields = append(node.Fields, observationmodel.FieldObservation{
+				Name: fieldName,
+				Node: analyzeNode(fieldValue),
+			})
 		}
 
-		observation.Fields = append(observation.Fields, field)
+	case []any:
+		for _, item := range value {
+			node.ArrayElement = append(node.ArrayElement, analyzeNode(item))
+		}
 	}
 
-	return observation, nil
+	return node
 }
 
 func determineFieldType(fieldValue any) observationmodel.FieldType {

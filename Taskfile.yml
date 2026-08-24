@@ -1,51 +1,59 @@
 version: "3"
 
 tasks:
-  clean:
-    desc: Clean cached data
-    cmds:
-      - go clean -cache
   dev:
-    desc: Run SchemaBridge in dev mode
+    desc: Run SchemaBridge in development mode
     cmds:
       - go run ./client/cli {{.CLI_ARGS}}
 
   build:
-    desc: Build SchemaBridge
+    desc: Build SchemaBridge CLI
     cmds:
       - go build -o schemabridge ./client/cli
-
-  test:
-    desc: Run tests
-    cmds:
-      - go test -v ./...
 
   run:
     desc: Run SchemaBridge CLI
     cmds:
       - ./schemabridge {{.CLI_ARGS}}
 
-  tidy:
-    desc: Tidy Go dependencies
+  format:
+    desc: Format Go source files
     cmds:
-      - go mod tidy
+      - gofmt -w .
+
+  format:check:
+    desc: Check Go formatting
+    cmds:
+      - test -z "$(gofmt -l .)"
+
+  vet:
+    desc: Run Go static analysis
+    cmds:
+      - go vet ./...
+
+  test:
+    desc: Run all tests
+    cmds:
+      - go test -v ./...
 
   test:unit:
     desc: Run unit tests
     cmds:
       - go test -v ./tests/unit/...
 
-  test:integration:
-    desc: Run integration tests
+  check:
+    desc: Run all quality checks
     cmds:
-      - go test -v ./tests/integration/...
+      - task format:check
+      - task vet
+      - task test
 
-  test:e2e:
-    desc: Run end-to-end tests
+  tidy:
+    desc: Tidy Go dependencies
     cmds:
-      - go test -v ./tests/e2e/...
+      - go mod tidy
 
-  test:perf:
-    desc: Run performance tests
+  clean:
+    desc: Remove Go build and test caches
     cmds:
-      - go test -v ./tests/perftest/...
+      - go clean -cache -testcache

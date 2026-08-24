@@ -1,0 +1,12 @@
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      run: task format:check
+      fail_text: "Formatting check failed. Run: task format"
+
+    vet:
+      run: task vet
+
+    test:
+      run: task test:unit
