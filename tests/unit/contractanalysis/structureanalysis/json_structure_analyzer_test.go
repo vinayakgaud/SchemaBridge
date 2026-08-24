@@ -524,3 +524,49 @@ func TestAnalyzeJSON_ArrayOfDifferentObjectShapes(t *testing.T) {
 		)
 	}
 }
+
+func TestAnalyzeJSON_NumberValue(t *testing.T) {
+	testJSON := `{
+		"integer" : 42,
+		"decimal" : 42.5
+	}`
+
+	result, err := structureanalysis.AnalyzeJSON([]byte(testJSON))
+
+	if err != nil {
+		t.Fatalf("AnalyzeJSON() returned an error = %v", err)
+	}
+
+	integerField := findField(result.Root.Fields, "integer")
+
+	if integerField == nil {
+		t.Fatalf(`field "integer" was not found`)
+	}
+
+	if integerField.Node.NumberValue == nil {
+		t.Fatalf(`integer.NumberValue is nil`)
+	}
+
+	if *integerField.Node.NumberValue != 42 {
+		t.Fatalf(
+			"integer.NumberValue = %v, want 42",
+			*integerField.Node.NumberValue,
+		)
+	}
+
+	decimalField := findField(result.Root.Fields, "decimal")
+	if decimalField == nil {
+		t.Fatalf(`field "decimal" was not found`)
+	}
+
+	if decimalField.Node.NumberValue == nil {
+		t.Fatalf(`decimal.NumberValue is nil`)
+	}
+
+	if *decimalField.Node.NumberValue != 42.5 {
+		t.Fatalf(
+			"decimal.NumberValue = %v, want 42.5",
+			*decimalField.Node.NumberValue,
+		)
+	}
+}

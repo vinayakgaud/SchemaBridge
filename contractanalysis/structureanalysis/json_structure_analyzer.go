@@ -25,6 +25,10 @@ func analyzeNode(value any) observationmodel.ObservationNode {
 		Nullable: value == nil,
 	}
 
+	if number, ok := value.(float64); ok {
+		node.NumberValue = &number
+	}
+
 	switch value := value.(type) {
 	case map[string]any:
 		for fieldName, fieldValue := range value {

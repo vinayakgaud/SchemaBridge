@@ -57,3 +57,8 @@ tasks:
     desc: Remove Go build and test caches
     cmds:
       - go clean -cache -testcache
+
+  checkpoint:
+    desc: Format, validate, and create a Git commit
+    cmds:
+      - bash ./scripts/checkpoint.sh

@@ -7,6 +7,7 @@ type ObservationModel struct {
 type ObservationNode struct {
 	Type         FieldType
 	Nullable     bool
+	NumberValue  *float64
 	Fields       []FieldObservation
 	ArrayElement []ObservationNode
 }
