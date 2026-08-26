@@ -37,9 +37,11 @@ tasks:
       - go test -v ./...
 
   test:unit:
-    desc: Run unit tests
+    desc: Run unit tests, optionally for a package
+    vars:
+      PACKAGE: "{{.CLI_ARGS}}"
     cmds:
-      - go test -v ./tests/unit/...
+      - go test -v ./tests/unit/{{if .PACKAGE}}{{.PACKAGE}}/...{{else}}...{{end}}
 
   check:
     desc: Run all quality checks
