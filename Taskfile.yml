@@ -64,3 +64,8 @@ tasks:
     desc: Format, validate, and create a Git commit
     cmds:
       - bash ./scripts/checkpoint.sh
+
+  start:
+    desc: Sync main and create a new feature branch
+    cmds:
+      - bash ./scripts/start.sh {{.CLI_ARGS}}
